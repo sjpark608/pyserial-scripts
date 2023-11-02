@@ -5,7 +5,7 @@ import logging
 _logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
-PORT = "COM7" # change this for testing
+PORT = "COM15" # change this for testing
 PHASE_LEN = 360 #x-axis
 AMPLITUDE_LEN = 256#y-axis
 
@@ -47,4 +47,49 @@ def receive_dummy_raster():
         for _ in range(PHASE_LEN):
             ser.read(AMPLITUDE_LEN)
 
+def txrx_byte(num):
+    with serial.Serial() as ser:
+        ser.baudrate=1000000
+        ser.bytesize=8
+        ser.parity="N"
+        ser.stopbits=1
+        ser.port=PORT
+        ser.open()
+
+        _logger.info(f"byte: {num.to_bytes(1,'big')}")
+        ser.write(num.to_bytes(1,'big'))
+        res= ser.read(1)
+        _logger.info(f"byte: {res}")
+
+def read_byte():
+    with serial.Serial() as ser:
+        ser.baudrate=1000000
+        ser.bytesize=8
+        ser.parity="N"
+        ser.stopbits=1
+        ser.port=PORT
+        ser.timeout = 1
+        ser.open()
+
+        num= ser.read(1)
+        _logger.info(f"byte: {num}")
+
 # ser = serial.Serial(port=PORT, baudrate=1000000, bytesize=8, parity="N", stopbits=1)
+if __name__ == '__main__':
+    cmd = None
+    while cmd != 0:
+        cmd = int(input("""
+                menu
+                ----
+                 (0). exit
+                 (1). simple test
+                """).strip())
+        if cmd == 0:
+            print('Exit program')
+        elif cmd == 1:
+            num = int(input("enter number to send: ").strip())
+            txrx_byte(num)
+        else:
+            print(f'Invalid cmd = {cmd}')
+
+    print('===================================================')
