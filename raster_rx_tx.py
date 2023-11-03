@@ -61,18 +61,44 @@ def txrx_byte(num):
         res= ser.read(1)
         _logger.info(f"byte: {res}")
 
-def read_byte():
-    with serial.Serial() as ser:
-        ser.baudrate=1000000
-        ser.bytesize=8
-        ser.parity="N"
-        ser.stopbits=1
-        ser.port=PORT
-        ser.timeout = 1
-        ser.open()
+def txrx_256bytes():
+        with serial.Serial() as ser:
+            ser.baudrate=1000000
+            ser.bytesize=8
+            ser.parity="N"
+            ser.stopbits=1
+            ser.port=PORT
+            ser.open()
 
-        num= ser.read(1)
-        _logger.info(f"byte: {num}")
+            dummy_data = [random.randint(0,255) for _ in range(AMPLITUDE_LEN)]
+            dummy_hash = gen_raster_md5(dummy_data)
+            _logger.info(f"byte: {dummy_data}, hash: {dummy_hash}")
+            ser.write(dummy_data)
+            res= ser.read(256)
+            res = [res_int for res_int in res]
+            res_hash = gen_raster_md5(res)
+            _logger.info(f"byte: {res}, res_hash {res_hash}")
+            _logger.info(f"Is hash match? {res_hash==dummy_hash}")
+
+def tx256_rx256sum():
+        with serial.Serial() as ser:
+            ser.baudrate=1000000
+            ser.bytesize=8
+            ser.parity="N"
+            ser.stopbits=1
+            ser.port=PORT
+            ser.timeout = 0.5
+            ser.open()
+
+            dummy_data = [random.randint(0,255) for _ in range(AMPLITUDE_LEN)]
+            dummy_sum = sum(dummy_data)
+            _logger.info(f"byte: {dummy_data}, sum: {dummy_sum}")
+            ser.write(dummy_data)
+            res= ser.read(2)
+            res = [res_int for res_int in res]
+            res_sum = res[0]*256+res[1]
+            _logger.info(f"byte: {res}, res_hash {res_sum}")
+            _logger.info(f"Is hash match? {res_sum==dummy_sum}")
 
 # ser = serial.Serial(port=PORT, baudrate=1000000, bytesize=8, parity="N", stopbits=1)
 if __name__ == '__main__':
@@ -83,12 +109,20 @@ if __name__ == '__main__':
                 ----
                  (0). exit
                  (1). simple test
+                 (2). send 256 receive 256
+                 (3). send 256, receive sum of 256
                 """).strip())
         if cmd == 0:
             print('Exit program')
         elif cmd == 1:
             num = int(input("enter number to send: ").strip())
             txrx_byte(num)
+        elif cmd ==2:
+            for _ in range(1):
+                txrx_256bytes()
+        elif cmd ==3:
+            for _ in range(256):
+                tx256_rx256sum()
         else:
             print(f'Invalid cmd = {cmd}')
 
