@@ -23,6 +23,7 @@ def create_raster():
     image =np.array(image)
     image =np.rot90(image, k=1)
     print(np.array(image))
+    np.savetxt("rast_file", image, fmt='%d', delimiter='\t')
     plt.imshow(image, cmap='gray', vmin=0, vmax=255)
     plt.colorbar()
     plt.grid(visible=True, linestyle='--', linewidth=0.5)
