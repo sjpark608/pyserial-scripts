@@ -6,7 +6,7 @@ from time import perf_counter
 _logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
-PORT = "COM15" # change this for testing
+PORT = "COM14" # change this for testing
 PHASE_LEN = 128 #x-axis
 AMPLITUDE_LEN = 128#y-axis
 
@@ -91,15 +91,15 @@ def tx256_rx256sum():
             ser.timeout = 0.5
             ser.open()
 
-            dummy_data = [random.randint(0,255) for _ in range(AMPLITUDE_LEN)]
+            dummy_data = [random.randint(0,255) for _ in range(AMPLITUDE_LEN*AMPLITUDE_LEN)]
             dummy_sum = sum(dummy_data)
-            _logger.info(f"byte: {dummy_data}, sum: {dummy_sum}")
+            _logger.info(f"sum: {dummy_sum}")
             t1 = perf_counter()
-            ser.write(dummy_data)
-            res= ser.read(2)
+            ser.write(bytes(dummy_data))
+            res= ser.read(4)
             t2 = perf_counter()
             res = [res_int for res_int in res]
-            res_sum = res[0]*256+res[1]
+            res_sum = (res[0]<<24)+(res[1]<<16)+(res[2]<<8)+res[3]
             _logger.info(f"byte: {res}, res_hash {res_sum}")
             _logger.info(f"Time: {t2-t1}Is hash match? {res_sum==dummy_sum}")
 
