@@ -11,10 +11,10 @@ from pymodbus.pdu import ExceptionResponse
 
 
 _logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 SER_PORT = "COM14" # change this for testing
-MODBUS_PORT = "COM9"
+MODBUS_PORT = "COM16"
 PHASE_LEN = 128 #x-axis
 AMPLITUDE_LEN = 128#y-axis
 
@@ -32,7 +32,7 @@ def read_modbus():
         modbus_read=0
         modbus_err =0
         modbus.connect()
-        while modbus_read<1:
+        while modbus_read<10:
             try:
                 reg = modbus.read_holding_registers(2048,55,247)
                 _logger.info(f"Regs 2048-2103: {reg.registers}")
@@ -57,7 +57,7 @@ def send_serial():
         ser.open()
         raster_read=0
         raster_err=0
-        while raster_read<1:
+        while raster_read<10:
             try:
                 dummy_data = [random.randint(0,255) for _ in range(AMPLITUDE_LEN*AMPLITUDE_LEN)]
                 dummy_sum = sum(dummy_data)

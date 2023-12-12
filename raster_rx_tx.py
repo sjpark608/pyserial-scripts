@@ -3,6 +3,7 @@ import random
 import hashlib
 import logging
 from time import perf_counter
+from dummy_raster_points import DUMMY_RASTER_IMAGE
 _logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
@@ -103,6 +104,23 @@ def tx256_rx256sum():
             _logger.info(f"byte: {res}, res_hash {res_sum}")
             _logger.info(f"Time: {t2-t1}Is hash match? {res_sum==dummy_sum}")
 
+def send_dummy_raster():
+    with serial.Serial() as ser:
+        ser.baudrate=1000000
+        ser.bytesize=8
+        ser.parity="N"
+        ser.stopbits=1
+        ser.port=PORT
+        ser.timeout = 0.5
+        ser.open()
+
+        dummy_data=DUMMY_RASTER_IMAGE
+        _logger.info(f"Length of Bytes {len(dummy_data)}")
+        t1 = perf_counter()
+        ser.write(bytes(dummy_data))
+        t2 = perf_counter()
+        _logger.info(f"Time: {t2-t1}")
+
 # ser = serial.Serial(port=PORT, baudrate=1000000, bytesize=8, parity="N", stopbits=1)
 if __name__ == '__main__':
     cmd = None
@@ -114,6 +132,7 @@ if __name__ == '__main__':
                  (1). simple test
                  (2). send 256 receive 256
                  (3). send 128, receive sum of 128
+                 (4). Send Dummy Raster
                 """).strip())
         if cmd == 0:
             print('Exit program')
@@ -126,6 +145,8 @@ if __name__ == '__main__':
         elif cmd ==3:
             for _ in range(128):
                 tx256_rx256sum()
+        elif cmd ==4:
+            send_dummy_raster()
         else:
             print(f'Invalid cmd = {cmd}')
 
