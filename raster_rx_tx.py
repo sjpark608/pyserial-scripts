@@ -201,7 +201,7 @@ def read_raster_through_modbus():
     for col in raster_read:
         # 1 register holds two pixel values
         regs = client.read_holding_registers(addrx,64,247)
-        for indx, reg in enumerate(regs):
+        for indx, reg in enumerate(regs.registers):
             col[indx*2] = reg&0xFF
             col[indx*2+1] = reg>>8
         # increment address pointer by 64

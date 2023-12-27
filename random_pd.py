@@ -9,9 +9,9 @@ max_px = 255
 
 def create_column(multiplier):
     column = np.concatenate((np.random.uniform(180,256,30).astype(int),
-                             (np.random.uniform(1,2,45)).astype(int),
+                             (np.random.uniform(0,1,45)).astype(int),
                              (np.random.uniform(800,900,5)*multiplier).astype(int),
-                             (np.random.uniform(1,2,48)).astype(int)))
+                             (np.random.uniform(0,1,48)).astype(int)))
     # print(column)
     return column
 
