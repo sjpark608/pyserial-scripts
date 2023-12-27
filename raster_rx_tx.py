@@ -199,12 +199,13 @@ def read_raster_through_modbus():
     addrx = 16384
     t_1 = perf_counter()
     for col in raster_read:
-        temp = client.read_holding_registers(addrx,64,247)
-        col[:64] = temp.registers
+        # 1 register holds two pixel values
+        regs = client.read_holding_registers(addrx,64,247)
+        for indx, reg in enumerate(regs):
+            col[indx*2] = reg&0xFF
+            col[indx*2+1] = reg>>8
+        # increment address pointer by 64
         addrx+=64
-        temp = client.read_holding_registers(addrx,64,247)
-        col[64:128] = temp.registers
-        addrx+=64   
     t_2 = perf_counter()
     print(f"raster = {raster_read}, time = {t_2-t_1}")
     client.close()
