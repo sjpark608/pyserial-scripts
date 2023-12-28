@@ -148,6 +148,7 @@ def read_channel(ch):
     _logger.info(f"Ch Temperature: {ch_metric.registers[2]}")
     _logger.info(f"Ch Humidity: {ch_metric.registers[3]}")
     _logger.info(f"Ch Ultra Sound: {ch_metric.registers[4]}")
+    _logger.info(f"Ch Cumulative PD: {ch_metric.registers[9]}")
     _logger.info(f"Ch Peak PD: {ch_metric.registers[10]}")
     _logger.info(f"Ch Total PD: {ch_metric.registers[11]}")
     _logger.info(f"Ch Peak PD Bins: {ch_metric.registers[12:24]}")
