@@ -12,7 +12,8 @@ from pymodbus.pdu import ExceptionResponse
 _logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
-PORT = "COM14" # change this for testing
+PORT = "COM20" # change this for testing
+MODBUS_PORT = "COM9"
 PHASE_LEN = 128 #x-axis
 AMPLITUDE_LEN = 128#y-axis
 
@@ -128,7 +129,7 @@ def send_dummy_raster():
 
 def read_channel(ch):
     client = ModbusSerialClient(
-    "COM9",
+    MODBUS_PORT,
     # framer=Framer.SOCKET,
     # timeout=10,
     # retries=3,
@@ -157,7 +158,7 @@ def read_channel(ch):
 
 def update_raster_channel(ch):
     client = ModbusSerialClient(
-    "COM9",
+    MODBUS_PORT,
     # framer=Framer.SOCKET,
     # timeout=10,
     # retries=3,
@@ -182,7 +183,7 @@ def update_raster_channel(ch):
 
 def read_raster_through_modbus():
     client = ModbusSerialClient(
-    "COM9",
+    MODBUS_PORT,
     # framer=Framer.SOCKET,
     # timeout=10,
     # retries=3,
