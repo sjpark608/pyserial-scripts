@@ -9,6 +9,10 @@ from pymodbus.client import ModbusSerialClient
 
 from pymodbus.exceptions import ModbusException
 from pymodbus.pdu import ExceptionResponse
+
+from edgepi.adc.edgepi_adc import EdgepiADC
+from edgepi.adc.adc_constants import AnalogIn, ConvMode, ADC1DataRate
+
 _logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
@@ -126,8 +130,21 @@ def read_raster_through_modbus():
                 f.write(f"{row},")
             f.write(f"\n")
 
+def fsm_dummy(adc):
+    prev_adc = 0
+    try:
+        while True:
+            curr_adc = adc.single_sample()
+            if curr_adc > 1.0 and prev_adc < 1.0:
+                # start building random raster
+            elif curr_adc < 1.0 and prev_adc > 1.0:
+                # send serial output
+            else:
+                # do nothing
 
 if __name__ == '__main__':
+    adc = EdgePiADC()
+    edgepi_adc.set_config(adc_1_analog_in=AnalogIn.AIN1, conversion_mode=ConvMode.PULSE, adc_1_data_rate=ADC1DataRate.SPS_38400)
     cmd = None
     while cmd != 0:
         cmd = int(input("""
@@ -155,3 +172,11 @@ if __name__ == '__main__':
             print(f'Invalid cmd = {cmd}')
 
     print('===================================================')
+
+
+# Monitor ADC 
+# If ADC > 1V and prev ADC < 1V
+# Start Randomizing Cloud plots
+# If ADC < 1V and prev ADC > 1V
+# Start sending Cloud plots
+# prev = ADC
